@@ -2,6 +2,7 @@ import sys, types
 from .lock import allocate_lock
 from .error import CDefError
 from . import model
+from . import pkgconfig
 
 try:
     callable
@@ -640,6 +641,12 @@ class FFI(object):
         if os.sep in module_name or (os.altsep and os.altsep in module_name):
             raise ValueError("'module_name' must not contain '/': use a dotted "
                              "name to make a 'package.module' location")
+        if "pkgconfig" in kwds and pkgconfig.is_installed():
+            if "libraries" in kwds:
+                del kwds["libraries"]  # real library names are going to be
+                                        # provided by pkg-config
+            pkgconfig.merge_flags(kwds, pkgconfig.kwargs(kwds["pkgconfig"]))
+            del kwds["pkgconfig"]
         self._assigned_source = (str(module_name), source,
                                  source_extension, kwds)
 
