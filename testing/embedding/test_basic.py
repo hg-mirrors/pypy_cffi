@@ -63,8 +63,8 @@ class EmbeddingTests:
         output = popen.stdout.read()
         err = popen.wait()
         if err:
-            raise OSError("popen failed with exit code %r: %r" % (
-                err, args))
+            raise OSError(("popen failed with exit code %r: %r\n\n%s" % (
+                err, args, output)).rstrip())
         print(output.rstrip())
         return output
 
@@ -172,7 +172,8 @@ if sys.platform == 'win32':
         result = popen.stdout.read()
         err = popen.wait()
         if err:
-            raise OSError("%r failed with exit code %r" % (name, err))
+            raise OSError("%r failed with exit code %r" % (
+                os.path.join(path, executable_name), err))
         return result
 
 
